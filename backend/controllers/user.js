@@ -5,23 +5,38 @@ const bcryptRounds = 10;
 const jwtSecretKey = "RAPTOR4124_EHEKELF";
 
 exports.signup = (req, res, next) => {
-  bcrypt
-    .hash(req.body.password, bcryptRounds)
-    .then((hash) => {
-      const user = new User({
-        email: req.body.email,
-        password: hash,
-      });
-      user
-        .save()
-        .then((user) =>
-          res.status(201).json({
-            message: "utilisateur créé",
-          })
-        )
-        .catch((error) => res.status(400).json({ error }));
+  User.findOne({ email: req.body.email })
+    .then((existingUser) => {
+      if (existingUser) {
+        throw new Error("Cette adresse mail est déjà utilisée");
+      }
+
+      bcrypt
+        .hash(req.body.password, bcryptRounds)
+        .then((hash) => {
+          const user = new User({
+            email: req.body.email,
+            password: hash,
+          });
+
+          user
+            .save()
+            .then(() => {
+              res.status(201).json({
+                message: "Utilisateur créé",
+              });
+            })
+            .catch((error) => {
+              res.status(400).json({ error: error.message });
+            });
+        })
+        .catch((error) => {
+          res.status(500).json({ error });
+        });
     })
-    .catch((error) => res.status(500).json({ error }));
+    .catch((error) => {
+      res.status(500).json({ error: error.message });
+    });
 };
 
 exports.login = (req, res, next) => {

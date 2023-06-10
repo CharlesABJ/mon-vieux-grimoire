@@ -23,14 +23,14 @@ exports.postOneBook = (req, res, next) => {
 
 exports.putOneBook = (req, res, next) => {
   Book.updateOne({ _id: req.params.id }, { ...req.body, _id: req.params.id })
-    .then((Book) => res.status(200).json({ Book }))
+    .then((Book) => res.status(200).json(Book))
     .catch((error) => res.status(400).json({ error }));
   next();
 };
 
 exports.deleteOneBook = (req, res, next) => {
   Book.deleteOne({ _id: req.params.id }, { ...req.body, _id: req.params.id })
-    .then((Book) => res.status(200).json({ Book }))
+    .then((Book) => res.status(200).json(Book))
     .catch((error) => res.status(400).json({ error }));
   next();
 };
@@ -39,14 +39,14 @@ exports.deleteOneBook = (req, res, next) => {
 
 exports.getOneBook = (req, res, next) => {
   Book.findOne({ _id: req.params.id })
-    .then((Book) => res.status(200).json({ Book }))
+    .then((Book) => res.status(200).json(Book))
     .catch((error) => res.status(400).json({ error }));
   next();
 };
 
 exports.getAllBooks = (req, res, next) => {
   Book.find()
-    .then((Books) => res.status(200).json({ Books }))
+    .then((Books) => res.status(200).json(Books))
     .catch((error) => res.status(400).json({ error }));
   next();
 };
