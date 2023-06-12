@@ -1,9 +1,12 @@
+// Déclaration et importation des dépendances
 const express = require("express");
 const mongoose = require("mongoose");
 const path = require("path");
 const cors = require("cors");
+
 // require("dotenv").config();
 // const URI = process.env.URI;
+
 const URI =
   "mongodb+srv://charlesabj:C41242702031@cluster0.ifpnpzt.mongodb.net/?retryWrites=true&w=majority";
 const app = express();

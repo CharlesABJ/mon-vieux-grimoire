@@ -9,7 +9,12 @@ const bookSchema = mongoose.Schema({
   ratings: [
     {
       userId: { type: String, required: false },
-      grade: { type: Number, required: false },
+      grade: {
+        type: Number,
+        required: false,
+        min: 0,
+        max: 5,
+      },
     },
   ],
   averageRating: { type: Number, default: 0 },

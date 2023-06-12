@@ -1,5 +1,7 @@
 const jwt = require("jsonwebtoken");
 const jwtSecretKey = "RAPTOR4124_EHEKELF";
+// require("dotenv").config();
+// const jwtSecretKey = process.env.jwtSecretKey;
 
 module.exports = (req, res, next) => {
   try {
