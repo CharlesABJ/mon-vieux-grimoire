@@ -14,8 +14,8 @@ exports.postOneBook = (req, res, next) => {
   });
   book
     .save()
-    .then((book) => res.status(201).json({ message: "Livre créé" }))
-    .catch((error) => res.status(400).json({ error }));
+    .then(() => res.status(201).json({ message: "Livre créé" }))
+    .catch((error) => res.status(500).json({ error }));
   next();
 };
 

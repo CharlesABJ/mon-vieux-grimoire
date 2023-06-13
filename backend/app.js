@@ -4,13 +4,11 @@ const mongoose = require("mongoose");
 const path = require("path");
 const cors = require("cors");
 
-// require("dotenv").config();
-// const URI = process.env.URI;
+require("dotenv").config();
+const URI = process.env.URI;
 
-const URI =
-  "mongodb+srv://charlesabj:C41242702031@cluster0.ifpnpzt.mongodb.net/?retryWrites=true&w=majority";
 const app = express();
-const stuffRoutes = require("./routes/stuff");
+const bookRoutes = require("./routes/book");
 const userRoutes = require("./routes/user");
 console.log(URI);
 mongoose
@@ -34,7 +32,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 // Définit une route pour gérer les requêtes liées aux livres de l'API
-app.use("/api/books", stuffRoutes);
+app.use("/api/books", bookRoutes);
 
 // Définit une route pour gérer les requêtes d'authentification de l'API
 app.use("/api/auth", userRoutes);
