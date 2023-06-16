@@ -25,6 +25,20 @@ const corsOptions = {
 // Activer CORS pour toutes les routes
 app.use(cors(corsOptions));
 
+app.use((req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "Authorization, Origin, X-Requested-With, Content, Accept, Content-Type"
+  );
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET, POST, PUT, DELETE, PATCH, OPTIONS"
+  );
+  next();
+});
+
+
 // Ajoute un middleware pour analyser ces données et les rendre disponibles dans req.body
 app.use(express.urlencoded({ extended: true }));
 

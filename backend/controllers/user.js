@@ -3,18 +3,17 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 
-// require("dotenv").config();
-// const jwtSecretKey = process.env.jwtSecretKey;
+require("dotenv").config();
+const jwtSecretKey = process.env.jwtSecretKey;
 
 const bcryptRounds = 10;
-const jwtSecretKey = "RAPTOR4124_EHEKELF";
 
 exports.signup = (req, res, next) => {
   const { password } = req.body;
   User.findOne({ email: req.body.email }) // On cherche dans User un utilisateur ayant l'adresse e-mail spécifiée dans le body de la requête
     .then((existingUser) => {
       if (existingUser) {
-        throw new Error("Cette adresse mail est déjà utilisée");
+        return res.status(409).json({ message: "Cette adresse mail est déjà utilisée" });
       }
       bcrypt
         .hash(req.body.password, bcryptRounds) //On hash le password

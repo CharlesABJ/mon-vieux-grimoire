@@ -8,15 +8,13 @@ exports.postOneBook = (req, res, next) => {
   const book = new Book({
     ...bookObject,
     userId: req.auth.userId,
-    imageUrl: `${req.protocol}://${req.get("host")}/images/${
-      req.file.filename
-    }`,
+    imageUrl: `${req.protocol}://${req.get("host")}/images/${req.file.filename
+      }`,
   });
   book
     .save()
-    .then(() => res.status(201).json({ message: "Livre créé" }))
+    .then(() => res.status(201).json({ message: "Livre créé !" }))
     .catch((error) => res.status(500).json({ error }));
-  next();
 };
 
 exports.postRating = (req, res, next) => {
@@ -48,21 +46,20 @@ exports.postRating = (req, res, next) => {
       });
     })
     .catch((error) => res.status(400).json({ error }));
-  next();
 };
+
 exports.putOneBook = (req, res, next) => {
   const bookObject = req.file
     ? {
-        ...JSON.parse(req.body.book),
-        imageUrl: `${req.protocol}://${req.get("host")}/images/${
-          req.file.filename
+      ...JSON.parse(req.body.book),
+      imageUrl: `${req.protocol}://${req.get("host")}/images/${req.file.filename
         }`,
-      }
+    }
     : { ...req.body };
   delete bookObject._userId;
   Book.findOne({ _id: req.params.id })
     .then((book) => {
-      if (book.userId !== req.auth.userId) {
+      if (book._userId !== req.auth.userId) {
         return res.status(401).json({ message: "Non autorisé" });
       }
       Book.updateOne(
@@ -76,24 +73,59 @@ exports.putOneBook = (req, res, next) => {
 };
 
 exports.deleteOneBook = (req, res, next) => {
-  Book.deleteOne({ _id: req.params.id }, { ...req.body, _id: req.params.id })
-    .then((Book) => res.status(200).json(Book))
-    .catch((error) => res.status(400).json({ error }));
-  next();
+
+  Book.findOne({ _id: req.params.id })
+    .then((book) => {
+      if (!book) {
+        res.status(500).json({ message: "Ce livre n'existe pas." });
+      }
+
+      Book.deleteOne({ _id: req.params.id }, { ...req.body, _id: req.params.id })
+
+        .then((book) => {
+
+          if (book._userId !== req.auth.userId) {
+            return res.status(401).json({ message: "Vous n'êtes pas autorisé à supprimer ce livre." });
+          }
+          res.status(200).json(Book)
+        })
+        .catch((error) => res.status(400).json({ error }));
+    })
 };
 
-exports.getBestRating = (req, res, next) => {};
+exports.getBestRating = (req, res, next) => {
+  Book.find()
+    .sort({ averageRating: -1 })  //Trie par ordre décroissant
+    .limit(3) //Garder uniquement les 0 premiers
+    .then((books) => {
+      res.status(200).json(books);
+    })
+    .catch((error) => {
+      res.status(400).json({ error });
+    });
+};
+
 
 exports.getOneBook = (req, res, next) => {
   Book.findOne({ _id: req.params.id })
-    .then((Book) => res.status(200).json(Book))
-    .catch((error) => res.status(400).json({ error }));
-  next();
+    .then((book) => {
+      if (!book) {
+        return res.status(404).json({ message: "Le livre n'existe pas." });
+      }
+      res.status(200).json(book);
+    })
+    .catch((error) => {
+      res.status(400).json({ error });
+    });
 };
+
 
 exports.getAllBooks = (req, res, next) => {
   Book.find()
-    .then((Books) => res.status(200).json(Books))
+    .then((books) => {
+      if (books === null) {
+        res.status(204).json({ message: "Pas de livres" })
+      } res.status(200).json(books)
+    })
     .catch((error) => res.status(400).json({ error }));
-  next();
 };
