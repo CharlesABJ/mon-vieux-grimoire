@@ -10,7 +10,6 @@ const URI = process.env.URI;
 const app = express();
 const bookRoutes = require("./routes/book");
 const userRoutes = require("./routes/user");
-console.log(URI);
 mongoose
   .connect(URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log("Connexion à MongoDB réussie !"))

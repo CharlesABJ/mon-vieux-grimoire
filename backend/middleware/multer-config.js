@@ -28,7 +28,10 @@ const improveImage = (req, res, next) => {
             // Supprimer l'image non compressée en cas d'erreur
             fs.unlinkSync(req.file.path);
             return res.status(500).json({ error });
+
           }
+          req.file.buffer = null;
+          req.file.name = name;
           next();
         });
     } else {
