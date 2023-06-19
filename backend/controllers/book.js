@@ -1,19 +1,22 @@
 // Déclaration et importation des dépendances
 const Book = require("../models/Book");
+const fs = require("fs")
 
 exports.postOneBook = (req, res, next) => {
   const bookObject = JSON.parse(req.body.book);
-  delete bookObject._id;
-  delete bookObject._userId;
   const book = new Book({
     ...bookObject,
     userId: req.auth.userId,
-    imageUrl: `${req.protocol}://${req.get("host")}/images/${req.file.filename
+    imageUrl: `${req.protocol}://${req.get("host")}/images/${req.file.name
       }`,
   });
   book
     .save()
-    .then(() => res.status(201).json({ message: "Livre créé !" }))
+    .then(() => {
+      fs.unlinkSync(req.file.path)
+      res.status(201).json({ message: "Livre créé !" })
+    }
+    )
     .catch((error) => res.status(500).json({ error }));
 };
 
@@ -52,7 +55,7 @@ exports.putOneBook = (req, res, next) => {
   const bookObject = req.file
     ? {
       ...JSON.parse(req.body.book),
-      imageUrl: `${req.protocol}://${req.get("host")}/images/${req.file.filename
+      imageUrl: `${req.protocol}://${req.get("host")}/images/${req.file.name
         }`,
     }
     : { ...req.body };

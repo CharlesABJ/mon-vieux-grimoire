@@ -25,20 +25,6 @@ const corsOptions = {
 // Activer CORS pour toutes les routes
 app.use(cors(corsOptions));
 
-app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader(
-    "Access-Control-Allow-Headers",
-    "Authorization, Origin, X-Requested-With, Content, Accept, Content-Type"
-  );
-  res.setHeader(
-    "Access-Control-Allow-Methods",
-    "GET, POST, PUT, DELETE, PATCH, OPTIONS"
-  );
-  next();
-});
-
-
 // Ajoute un middleware pour analyser ces données et les rendre disponibles dans req.body
 app.use(express.urlencoded({ extended: true }));
 
@@ -51,6 +37,6 @@ app.use("/api/books", bookRoutes);
 // Définit une route pour gérer les requêtes d'authentification de l'API
 app.use("/api/auth", userRoutes);
 
-// Définit une route pour copier les fichiers uploadés dans le dossier "images", ces fichiers sont ensuite accessibles via l'URL "/images
+// Définit un middleware pour servir les fichiers statiques du répertoire "images" à partir de l'URL "/images"
 app.use("/images", express.static(path.join(__dirname, "images")));
 module.exports = app;
