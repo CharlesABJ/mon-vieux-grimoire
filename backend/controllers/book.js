@@ -1,19 +1,23 @@
 // Déclaration et importation des dépendances
+const { log } = require("console");
 const Book = require("../models/Book");
 const fs = require("fs")
 
 exports.postOneBook = (req, res, next) => {
   const bookObject = JSON.parse(req.body.book);
+  delete bookObject._id;
+  delete bookObject._userId;
   const book = new Book({
     ...bookObject,
     userId: req.auth.userId,
-    imageUrl: `${req.protocol}://${req.get("host")}/images/${req.file.name
+    imageUrl: `${req.protocol}://${req.get("host")}/images/${req.file.originalname
       }`,
   });
+  console.log(req.file.originalname);
+  console.log("2");
   book
     .save()
     .then(() => {
-      fs.unlinkSync(req.file.path)
       res.status(201).json({ message: "Livre créé !" })
     }
     )
@@ -82,18 +86,24 @@ exports.deleteOneBook = (req, res, next) => {
       if (!book) {
         res.status(500).json({ message: "Ce livre n'existe pas." });
       }
+      if (book._userId !== req.auth.userId) {
+        return res.status(401).json({ message: "Vous n'êtes pas autorisé à supprimer ce livre." });
+      }
 
-      Book.deleteOne({ _id: req.params.id }, { ...req.body, _id: req.params.id })
-
-        .then((book) => {
-
-          if (book._userId !== req.auth.userId) {
-            return res.status(401).json({ message: "Vous n'êtes pas autorisé à supprimer ce livre." });
+      if (book.imageUrl) {
+        const imagePath = `./images/${book.imageUrl}`;
+        fs.unlink(imagePath, (error) => {
+          if (error) {
+            return res.status(500).json({ error });
           }
-          res.status(200).json(Book)
+        });
+      }
+      Book.deleteOne({ _id: req.params.id }, { ...req.body, _id: req.params.id })
+        .then((book) => {
+          res.status(200).json(book)
         })
         .catch((error) => res.status(400).json({ error }));
-    })
+    }).catch((error) => res.status(400).json({ error }));
 };
 
 exports.getBestRating = (req, res, next) => {

@@ -1,9 +1,9 @@
 const multer = require("multer");
 const sharp = require("sharp");
 const fs = require("fs");
-const { log } = require("console");
+const slugify = require("slugify");
 
-//Créer une instance de memoryStorage pour stocker temporairement les fichiers téléchargés en mémoire vive
+// Créer une instance de memoryStorage pour stocker temporairement les fichiers téléchargés en mémoire vive
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
@@ -15,7 +15,9 @@ const improveImage = (req, res, next) => {
     const timestamp = Date.now();
 
     if (req.file) {
-      const name = `images/${timestamp}-${req.file.originalname.split(" ").join("-").split(".")[0]}.webp`
+      const originalName = req.file.originalname;
+      const normalizedFileName = slugify(originalName, { lower: true });
+      const name = `images/${timestamp}-${normalizedFileName}.webp`;
       const imageBuffer = req.file.buffer;
 
       sharp(imageBuffer)
@@ -27,7 +29,6 @@ const improveImage = (req, res, next) => {
             fs.unlinkSync(req.file.path);
             return res.status(500).json({ error });
           }
-
           next();
         });
     } else {
