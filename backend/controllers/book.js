@@ -54,15 +54,14 @@ exports.postRating = (req, res, next) => {
           book.averageRating = sumOfRates / totalRatings;
 
           // Enregistrer les modifications
-          book.save().then(() => {
-            res.status(200).json({ message: "Notation enregistrée avec succès." });
+          book.save().then((book) => {
+            res.status(200).json(book, { message: "Notation enregistrée avec succès." });
           });
         })
         .catch((error) => res.status(400).json({ error }));
     })
     .catch((error) => res.status(400).json({ error }));
 };
-
 
 
 exports.putOneBook = (req, res, next) => {

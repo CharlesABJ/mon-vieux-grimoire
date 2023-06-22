@@ -13,7 +13,7 @@ const userRoutes = require("./routes/user");
 mongoose
   .connect(URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log("Connexion à MongoDB réussie !"))
-  .catch(() => console.log("Connexion à MongoDB échouée !"));
+  .catch((error) => console.log({ message: error }));
 
 // Configurer les options CORS pour autoriser toutes les origines
 const corsOptions = {
