@@ -26,6 +26,11 @@ L'API expose les 7 routes suivantes pour gérer les livres :
 **PUT** /books/:id : Mettre à jour les informations d'un livre spécifique.
 **DELETE** /books/:id : Supprimer un livre spécifique.
 
+L'API expose les 2 routes suivantes pour gérer l'authentification :
+
+**POST** /auth/signup : Créer un nouveau livre.
+**POST** /auth/login : Noter un livre.
+
 ### La Structure du projet
 
 **controllers/** : Contient les contrôleurs qui gèrent les actions pour chaque route.

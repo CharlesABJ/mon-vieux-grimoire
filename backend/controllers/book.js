@@ -3,6 +3,8 @@ const Book = require("../models/Book");
 const fs = require("fs")
 
 exports.postOneBook = (req, res, next) => {
+
+  // const bookObject = (req.body); //Test avec Postman
   const bookObject = JSON.parse(req.body.book);
   delete bookObject._id;
   delete bookObject._userId;
