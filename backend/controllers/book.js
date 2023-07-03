@@ -57,7 +57,7 @@ exports.postRating = (req, res, next) => {
 
           // Enregistrer les modifications
           book.save().then((book) => {
-            res.status(200).json(book, { message: "Notation enregistrée avec succès." });
+            res.status(200).json(book);
           });
         })
         .catch((error) => res.status(400).json({ error }));
